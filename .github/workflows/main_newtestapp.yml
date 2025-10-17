@@ -54,6 +54,7 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'NewTestApp'
-          slot-name: 'Production'
+          slot-name: 'testenv'
 
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C3BB7077ABD14CBB9A9DCE2412593690 }}
+
