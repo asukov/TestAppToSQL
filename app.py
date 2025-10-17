@@ -1,34 +1,43 @@
 import os
-from flask import Flask, jsonify
 import mysql.connector
 
-app = Flask(__name__)
+# Connect using environment variables
+conn = mysql.connector.connect(
+    host=os.environ['DBHOST'],
+    database=os.environ['DBNAME'],
+    user=os.environ['DBUSER'],
+    password=os.environ['DBPASS']
+)
 
-@app.route('/')
-def index():
-    try:
-        conn = mysql.connector.connect(
-            host=os.environ['AZURE_MYSQL_HOST'],
-            database=os.environ['AZURE_MYSQL_NAME'],
-            user=os.environ['AZURE_MYSQL_USER'],
-            password=os.environ['AZURE_MYSQL_PASSWORD']
-        )
-        cursor = conn.cursor()
-        cursor.execute("SHOW TABLES")
-        tables = cursor.fetchall()
+cursor = conn.cursor()
 
-        result = {}
-        for (table_name,) in tables:
-            cursor.execute(f"SELECT * FROM {table_name}")
-            rows = cursor.fetchall()
-            result[table_name] = [list(row) for row in rows]
+# Create table
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS employees (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        department VARCHAR(100),
+        salary DECIMAL(10, 2)
+    )
+""")
 
-        cursor.close()
-        conn.close()
-        return jsonify(result)
+# Insert sample data
+cursor.execute("DELETE FROM employees")  # Clear existing data
+sample_data = [
+    ("Alice", "Engineering", 85000.00),
+    ("Bob", "Marketing", 65000.00),
+    ("Charlie", "HR", 60000.00)
+]
+cursor.executemany("INSERT INTO employees (name, department, salary) VALUES (%s, %s, %s)", sample_data)
+conn.commit()
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# Query data
+cursor.execute("SELECT * FROM employees")
+rows = cursor.fetchall()
 
-if __name__ == '__main__':
-    app.run()
+# Print results
+for row in rows:
+    print(row)
+
+cursor.close()
+conn.close()
