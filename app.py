@@ -9,10 +9,10 @@ def index():
     try:
         # Connect to the MySQL database using environment variables
         conn = mysql.connector.connect(
-            host=os.environ['DBHOST'],
-            database=os.environ['DBNAME'],
-            user=os.environ['DBUSER'],
-            password=os.environ['DBPASS']
+            host=os.environ['AZURE_MYSQL_HOST'],
+            database=os.environ['AZURE_MYSQL_NAME'],
+            user=os.environ['AZURE_MYSQL_USER'],
+            password=os.environ['AZURE_MYSQL_PASSWORD']
         )
         cursor = conn.cursor()
 
