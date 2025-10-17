@@ -29,9 +29,9 @@ def index():
         # Clear existing data and insert sample data
         cursor.execute("DELETE FROM employees")
         sample_data = [
-            ("Alice", "Engineering", 85000.00),
-            ("Bob", "Marketing", 65000.00),
-            ("Charlie", "HR", 60000.00)
+            ("Alice", "Engineering", 185000.00),
+            ("Bob", "Marketing", 165000.00),
+            ("Charlie", "HR", 160000.00)
         ]
         cursor.executemany("INSERT INTO employees (name, department, salary) VALUES (%s, %s, %s)", sample_data)
         conn.commit()
